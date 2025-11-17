@@ -1,9 +1,16 @@
-
+import MyContainer from "../../components/MyContainer/MyContainer";
+import Carousel from "../Carousel/Carousel";
 
 const Home = () => {
   return (
     <>
-      This is home
+      <title>Home - Zap Shift</title>
+
+      <section className="my-10">
+        <MyContainer>
+          <Carousel />
+        </MyContainer>
+      </section>
     </>
   );
 };
