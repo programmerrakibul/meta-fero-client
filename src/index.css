@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-black: #1f1f1f;
+  --color-primary: #caeb66;
+  --color-secondary: #03373d;
+  --color-success: #25bb2f;
+}
+
+.btn {
+  @apply font-semibold md:font-bold rounded-lg;
+}
+
+.nav-links {
+  @apply capitalize rounded-2xl;
+}
+
+.nav-links:hover,
+.nav-links.active {
+  @apply bg-primary;
+}
