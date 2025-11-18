@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow } from "swiper/modules";
+import { Autoplay, EffectCoverflow } from "swiper/modules";
 import MyTitle from "../../../components/MyTitle/MyTitle";
 import { reviewsData } from "../../../data/reviewsData";
 import reviewQuote from "../../../assets/reviewQuote.png";
@@ -23,6 +23,11 @@ const ReviewsSection = () => {
         slidesPerView={3}
         loop={true}
         centeredSlides={true}
+        
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
         coverflowEffect={{
           rotate: 0,
           stretch: 0,
@@ -31,7 +36,7 @@ const ReviewsSection = () => {
           slideShadows: false,
         }}
         pagination={true}
-        modules={[EffectCoverflow]}
+        modules={[EffectCoverflow, Autoplay]}
         className="reviewsSwiper"
       >
         {reviewsData.map((review) => (
