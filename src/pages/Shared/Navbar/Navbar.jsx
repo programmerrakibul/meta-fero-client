@@ -1,9 +1,12 @@
-import { NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import Logo from "../../../components/Logo/Logo";
 import MyContainer from "../MyContainer/MyContainer";
 import MyButton from "../../../components/MyButton/MyButton";
+import useAuthInfo from "../../../hooks/useAuthInfo";
 
 const Navbar = () => {
+  const { currentUser, logoutUser } = useAuthInfo();
+  const navigate = useNavigate();
   const navTexts = ["services", "coverage", "about us", "pricing"];
   const navLinks = navTexts.map((item) => (
     <li key={item.replaceAll(" ", "")}>
@@ -12,6 +15,14 @@ const Navbar = () => {
       </NavLink>
     </li>
   ));
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <nav>
@@ -44,19 +55,60 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 {navLinks}
+                {currentUser && (
+                  <li>
+                    <Link to="/be-a-rider" className="nav-links">
+                      Be a Rider
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
             <Logo />
           </div>
+
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1 text-base font-semibold">
               {navLinks}
+              {currentUser && (
+                <li>
+                  <Link to="/be-a-rider" className="nav-links">
+                    Be a Rider
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
-          <div className="navbar-end gap-2">
-            <button className="btn btn-outline border-base-300">Sign In</button>
 
-            <MyButton>Be a Rider</MyButton>
+          <div className="navbar-end gap-2">
+            {currentUser ? (
+              <>
+                <div
+                  data-tip={currentUser.displayName}
+                  className="avatar tooltip tooltip-left md:tooltip-bottom tooltip-secondary"
+                >
+                  <div className="ring-primary ring-offset-base-100 size-10 rounded-full ring-2 ring-offset-2 ">
+                    <img
+                      src={currentUser.photoURL}
+                      alt={currentUser.displayName}
+                    />
+                  </div>
+                </div>
+
+                <MyButton onClick={handleLogout}>Logout</MyButton>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/auth/login")}
+                  className="btn btn-outline border-base-300"
+                >
+                  Sign In
+                </button>
+
+                <MyButton>Be a Rider</MyButton>
+              </>
+            )}
           </div>
         </div>
       </MyContainer>

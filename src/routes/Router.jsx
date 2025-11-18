@@ -3,6 +3,9 @@ import RootLayout from "../layouts/RootLayout";
 import Home from "../pages/Homepage/Home/Home";
 import CoveragePage from "../pages/CoveragePage/CoveragePage";
 import axios from "axios";
+import AuthLayout from "../layouts/AuthLayout";
+import Login from "../pages/Auth/Login/Login";
+import Register from "../pages/Auth/Register/Register";
 
 const Router = createBrowserRouter([
   {
@@ -18,6 +21,20 @@ const Router = createBrowserRouter([
         path: "coverage",
         element: <CoveragePage />,
         loader: async () => axios("/warehouses.json"),
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "auth/login",
+        element: <Login />,
+      },
+      {
+        path: "auth/register",
+        element: <Register />,
       },
     ],
   },
