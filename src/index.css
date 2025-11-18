@@ -28,10 +28,31 @@ h6 {
 }
 
 .nav-links {
-  @apply capitalize rounded-2xl;
+  @apply capitalize rounded-2xl text-black;
 }
 
 .nav-links:hover,
 .nav-links.active {
   @apply bg-primary;
+}
+
+.swiper-slide {
+  @apply self-center;
+}
+
+.accordion-checked:has(input:checked) {
+  @apply bg-[#E6F2F3] border-[#067A87];
+}
+
+.reviewsSwiper {
+  @apply w-full h-full;
+}
+
+.reviewsSwiper .swiper-slide:not(.swiper-slide-active) {
+  @apply blur-sm opacity-70;
+}
+
+.reviewsSwiper .swiper-slide-next,
+.reviewsSwiper .swiper-slide-prev {
+  @apply blur-[2px]! opacity-90!;
 }

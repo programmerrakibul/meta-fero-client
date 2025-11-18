@@ -2,7 +2,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MyButton from "../../components/MyButton/MyButton";
 import MyHeading from "../../components/MyHeading/MyHeading";
-import MyContainer from "../components/MyContainer/MyContainer";
+import MyContainer from "../Shared/MyContainer/MyContainer";
 import { RiSearchLine } from "react-icons/ri";
 import { useLoaderData } from "react-router";
 import { useRef } from "react";
@@ -12,7 +12,6 @@ const position = [23.777176, 90.399452];
 const CoveragePage = () => {
   const mapRef = useRef(null);
   const { data } = useLoaderData();
-  console.log(data);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -26,8 +25,6 @@ const CoveragePage = () => {
 
       mapRef.current.flyTo(coord, 11);
     }
-
-    console.log(query);
   };
 
   return (
@@ -61,7 +58,7 @@ const CoveragePage = () => {
               We deliver almost all over Bangladesh
             </h3>
 
-            <div className="h-[70dvh] rounded-2xl overflow-hidden" >
+            <div className="h-[70dvh] rounded-2xl overflow-hidden">
               <MapContainer
                 center={position}
                 zoom={8}
