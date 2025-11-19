@@ -49,6 +49,12 @@ const SendParcel = () => {
     info.uid = currentUser.uid;
     info.created_at = new Date().toISOString();
 
+    Object.entries(info).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        info[key] = value.trim();
+      }
+    });
+
     if (isDocument) {
       deliveryCharge = isSameDistrict ? 60 : 80;
     } else {
@@ -76,13 +82,10 @@ const SendParcel = () => {
 
     if (result.isConfirmed) {
       try {
-        const { data } = await secureAxios.post(
-          "http://localhost:5000/api/parcels",
-          {
-            ...info,
-            deliveryCharge,
-          }
-        );
+        const { data } = await secureAxios.post("/parcels", {
+          ...info,
+          deliveryCharge,
+        });
 
         if (data.success) {
           Swal.fire({
