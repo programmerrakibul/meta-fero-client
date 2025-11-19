@@ -62,6 +62,12 @@ h6 {
 }
 
 .input,
-.file-input {
+.file-input,
+.select,
+.textarea {
   @apply w-full;
+}
+
+.label {
+  @apply font-semibold text-black w-full;
 }

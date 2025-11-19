@@ -6,6 +6,7 @@ import axios from "axios";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
+import SendParcel from "../pages/SendParcel/SendParcel";
 
 const Router = createBrowserRouter([
   {
@@ -20,6 +21,11 @@ const Router = createBrowserRouter([
       {
         path: "coverage",
         element: <CoveragePage />,
+        loader: async () => axios("/warehouses.json"),
+      },
+      {
+        path: "send-parcel",
+        element: <SendParcel />,
         loader: async () => axios("/warehouses.json"),
       },
     ],

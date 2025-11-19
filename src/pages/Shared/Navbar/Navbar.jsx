@@ -7,7 +7,7 @@ import useAuthInfo from "../../../hooks/useAuthInfo";
 const Navbar = () => {
   const { currentUser, logoutUser } = useAuthInfo();
   const navigate = useNavigate();
-  const navTexts = ["services", "coverage", "about us", "pricing"];
+  const navTexts = ["services", "coverage", "about us", "send parcel"];
   const navLinks = navTexts.map((item) => (
     <li key={item.replaceAll(" ", "")}>
       <NavLink to={`/${item.replaceAll(" ", "-")}`} className="nav-links">
