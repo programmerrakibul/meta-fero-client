@@ -5,8 +5,12 @@ import MyContainer from "../Shared/MyContainer/MyContainer";
 import ErrorText from "../../components/ErrorText/ErrorText";
 import { useLoaderData } from "react-router";
 import useAuthInfo from "../../hooks/useAuthInfo";
+import Swal from "sweetalert2";
+import useSecureAxios from "../../hooks/useSecureAxios";
+import { toast } from "sonner";
 
 const SendParcel = () => {
+  const secureAxios = useSecureAxios();
   const { currentUser } = useAuthInfo();
   const { data } = useLoaderData();
   const duplicateRegions = data.map((item) => item.region);
@@ -37,27 +41,60 @@ const SendParcel = () => {
     const isDocument = info.document_type === "document";
     const isSameDistrict = info.sender_district === info.receiver_district;
     const parcelWeight = parseFloat(info.parcel_weight);
+    let deliveryCharge = 0;
+
     info.parcel_weight = parcelWeight;
     info.sender_number = Number(info.sender_number);
     info.receiver_number = Number(info.receiver_number);
-    let cost = 0;
+    info.uid = currentUser.uid;
+    info.created_at = new Date().toISOString();
 
     if (isDocument) {
-      cost = isSameDistrict ? 60 : 80;
+      deliveryCharge = isSameDistrict ? 60 : 80;
     } else {
       if (parcelWeight <= 3) {
-        cost = isSameDistrict ? 110 : 150;
+        deliveryCharge = isSameDistrict ? 110 : 150;
       } else {
         const minCharge = isSameDistrict ? 110 : 150;
         const extraWeight = parcelWeight - 3;
         const extraCharge = isSameDistrict
           ? extraWeight * 40
           : extraWeight * 40 + 40;
-        cost = minCharge + extraCharge;
+        deliveryCharge = minCharge + extraCharge;
       }
     }
 
-    console.log({ cost, ...info });
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You'll be charged ${deliveryCharge} Taka`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Agreed",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const { data } = await secureAxios.post(
+          "http://localhost:5000/api/parcels",
+          {
+            ...info,
+            deliveryCharge,
+          }
+        );
+
+        if (data.success) {
+          Swal.fire({
+            title: "Parcel data uploaded",
+            text: "Your parcel data has been uploaded.",
+            icon: "success",
+          });
+        }
+      } catch {
+        toast.error("Parcel data uploaded failed");
+      }
+    }
   };
 
   return (

@@ -41,8 +41,10 @@ const AuthProvider = ({ children }) => {
     const onSubscribe = onAuthStateChanged(auth, (user) => {
       setLoading(true);
       if (user) {
+        localStorage.setItem("tokenId", user.accessToken);
         setCurrentUser(user);
       } else {
+        localStorage.removeItem("tokenId");
         setCurrentUser(null);
       }
 
