@@ -9,6 +9,8 @@ import Register from "../pages/Auth/Register/Register";
 import SendParcel from "../pages/SendParcel/SendParcel";
 import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcel from "../pages/Dashboard/MyParcel/MyParcel";
+import Overview from "../pages/Dashboard/Overview/Overview";
+import PaymentSuccess from "../pages/Dashboard/Payment/PaymentSuccess";
 
 const Router = createBrowserRouter([
   {
@@ -51,8 +53,16 @@ const Router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
+        index: true,
+        element: <Overview />,
+      },
+      {
         path: "my-parcels",
         element: <MyParcel />,
+      },
+      {
+        path: "payment-success",
+        element: <PaymentSuccess />,
       },
     ],
   },

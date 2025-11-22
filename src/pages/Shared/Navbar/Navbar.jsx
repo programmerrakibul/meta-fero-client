@@ -7,7 +7,7 @@ import useAuthInfo from "../../../hooks/useAuthInfo";
 const Navbar = () => {
   const { currentUser, logoutUser } = useAuthInfo();
   const navigate = useNavigate();
-  const navTexts = ["services", "coverage", "about us", "send parcel"];
+  const navTexts = ["services", "coverage", "about us"];
   const navLinks = navTexts.map((item) => (
     <li key={item.replaceAll(" ", "")}>
       <NavLink to={`/${item.replaceAll(" ", "-")}`} className="nav-links">
@@ -47,7 +47,7 @@ const Navbar = () => {
                     strokeLinejoin="round"
                     strokeWidth="2"
                     d="M4 6h16M4 12h8m-8 6h16"
-                  />{" "}
+                  />
                 </svg>
               </div>
               <ul
@@ -55,12 +55,27 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 {navLinks}
+
                 {currentUser && (
-                  <li>
-                    <Link to="/be-a-rider" className="nav-links">
-                      Be a Rider
-                    </Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link to="/send-parcel" className="nav-links">
+                        Send Parcel
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/be-a-rider" className="nav-links">
+                        Be a Rider
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/dashboard" className="nav-links">
+                        Dashboard
+                      </Link>
+                    </li>
+                  </>
                 )}
               </ul>
             </div>
@@ -71,11 +86,25 @@ const Navbar = () => {
             <ul className="menu menu-horizontal px-1 text-base font-semibold">
               {navLinks}
               {currentUser && (
-                <li>
-                  <Link to="/be-a-rider" className="nav-links">
-                    Be a Rider
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link to="/send-parcel" className="nav-links">
+                      Send Parcel
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link to="/be-a-rider" className="nav-links">
+                      Be a Rider
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link to="/dashboard" className="nav-links">
+                      Dashboard
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
           </div>

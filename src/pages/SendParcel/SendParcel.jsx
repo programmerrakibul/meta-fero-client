@@ -43,17 +43,17 @@ const SendParcel = () => {
     const parcelWeight = parseFloat(info.parcel_weight);
     let deliveryCharge = 0;
 
+    Object.entries(info).forEach(([key, value]) => {
+      info[key] = value.trim();
+    });
+
     info.parcel_weight = parcelWeight;
     info.sender_number = Number(info.sender_number);
     info.receiver_number = Number(info.receiver_number);
     info.uid = currentUser.uid;
     info.created_at = new Date().toISOString();
-
-    Object.entries(info).forEach(([key, value]) => {
-      if (typeof value === "string") {
-        info[key] = value.trim();
-      }
-    });
+    info.delivery_status = "pending";
+    info.payment_status = "pending";
 
     if (isDocument) {
       deliveryCharge = isSameDistrict ? 60 : 80;
