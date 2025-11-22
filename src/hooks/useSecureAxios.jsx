@@ -8,7 +8,7 @@ const instance = axios.create({
 const useSecureAxios = () => {
   useEffect(() => {
     const requestInterceptor = instance.interceptors.request.use((config) => {
-      config.headers.authorization = `Bearer ${localStorage.getItem(
+      config.headers.Authorization = `Bearer ${localStorage.getItem(
         "tokenId"
       )}`;
 

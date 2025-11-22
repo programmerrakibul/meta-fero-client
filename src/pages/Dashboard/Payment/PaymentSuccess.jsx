@@ -1,33 +1,58 @@
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import useSecureAxios from "../../../hooks/useSecureAxios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const session_id = searchParams.get("session_id");
   const secureAxios = useSecureAxios();
+  const [paymentInfo, setPaymentInfo] = useState({});
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
       if (session_id) {
+        setLoading(true);
+
         try {
           const { data } = await secureAxios.put(
             `/parcel-checkout/status/${session_id}`
           );
 
-          console.log(data);
+          if (data.isExist) {
+            navigate("../my-parcels", { replace: true });
+          }
+
+          if (data.transaction_id && data.tracking_id) {
+            setPaymentInfo({
+              transaction_id: data.transaction_id,
+              tracking_id: data.tracking_id,
+            });
+          }
         } catch (err) {
           console.log(err);
+        } finally {
+          setLoading(false);
         }
       }
     })();
-  }, [secureAxios, session_id]);
+  }, [secureAxios, session_id, navigate]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  console.log(paymentInfo);
 
   return (
     <>
       <title>Payment Successful</title>
 
-      <div>Payment completed Successfully</div>
+      <div>
+        <p>{paymentInfo.transaction_id}</p>
+        <p>{paymentInfo.tracking_id}</p>
+      </div>
     </>
   );
 };
