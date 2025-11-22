@@ -198,17 +198,9 @@ const SendParcel = () => {
                       className="input"
                       defaultValue={currentUser.displayName}
                       placeholder="Name"
-                      {...register("sender_name", {
-                        required: "Sender Name is required",
-                        validate: (value) => {
-                          if (!value.trim()) return "Sender Name is required";
-                        },
-                      })}
+                      {...register("sender_name")}
+                      readOnly
                     />
-
-                    {errors.sender_name && (
-                      <ErrorText>{errors.sender_name.message}</ErrorText>
-                    )}
                   </label>
 
                   <label className="label flex-col items-start gap-1">
@@ -218,17 +210,9 @@ const SendParcel = () => {
                       className="input"
                       defaultValue={currentUser.email}
                       placeholder="Email"
-                      {...register("sender_email", {
-                        required: "Sender Email is required",
-                        validate: (value) => {
-                          if (!value.trim()) return "Sender Email is required";
-                        },
-                      })}
+                      {...register("sender_email")}
+                      readOnly
                     />
-
-                    {errors.sender_email && (
-                      <ErrorText>{errors.sender_email.message}</ErrorText>
-                    )}
                   </label>
 
                   <label className="label flex-col items-start gap-1">
@@ -256,7 +240,6 @@ const SendParcel = () => {
                     <input
                       type="number"
                       className="input"
-                      defaultValue={currentUser?.phoneNumber}
                       placeholder="Phone No"
                       {...register("sender_number", {
                         required: "Sender Number is required",

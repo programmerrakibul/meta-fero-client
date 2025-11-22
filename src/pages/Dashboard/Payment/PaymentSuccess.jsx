@@ -20,15 +20,13 @@ const PaymentSuccess = () => {
             `/parcel-checkout/status/${session_id}`
           );
 
-          if (data.isExist) {
-            navigate("../my-parcels", { replace: true });
-          }
-
           if (data.transaction_id && data.tracking_id) {
             setPaymentInfo({
               transaction_id: data.transaction_id,
               tracking_id: data.tracking_id,
             });
+          } else {
+            navigate("../my-parcels", { replace: true });
           }
         } catch (err) {
           console.log(err);
@@ -37,13 +35,11 @@ const PaymentSuccess = () => {
         }
       }
     })();
-  }, [secureAxios, session_id, navigate]);
+  }, [secureAxios, session_id, navigate, paymentInfo]);
 
   if (loading) {
     return <p>Loading...</p>;
   }
-
-  console.log(paymentInfo);
 
   return (
     <>
