@@ -31,12 +31,14 @@ const MyParcel = () => {
   });
 
   const handlePayment = async (parcel) => {
-    const { deliveryCharge, parcel_name, sender_email, _id } = parcel;
+    const { deliveryCharge, parcel_name, sender_email, sender_name, _id } =
+      parcel;
 
     const paymentInfo = {
       deliveryCharge,
       parcel_name,
       sender_email,
+      sender_name,
       parcel_id: _id,
     };
 
