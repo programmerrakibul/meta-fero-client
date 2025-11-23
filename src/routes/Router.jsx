@@ -11,6 +11,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcel from "../pages/Dashboard/MyParcel/MyParcel";
 import Overview from "../pages/Dashboard/Overview/Overview";
 import PaymentSuccess from "../pages/Dashboard/Payment/PaymentSuccess";
+import PaymentHistory from "../pages/Dashboard/Payment/PaymentHistory";
 
 const Router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ const Router = createBrowserRouter([
       {
         path: "payment-success",
         element: <PaymentSuccess />,
+      },
+      {
+        path: "payment-history",
+        element: <PaymentHistory />,
       },
     ],
   },

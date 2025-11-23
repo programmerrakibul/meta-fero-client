@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 import Logo from "../components/Logo/Logo";
 import MyContainer from "../pages/Shared/MyContainer/MyContainer";
 import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
+import { FaHistory } from "react-icons/fa";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -75,6 +76,20 @@ const DashboardLayout = () => {
                   >
                     <TbTruckDelivery />
                     <span className="is-drawer-close:hidden">My Parcels</span>
+                  </button>
+                </li>
+
+                {/* List item */}
+                <li>
+                  <button
+                    onClick={() => navigate("/dashboard/payment-history")}
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Payment History"
+                  >
+                    <FaHistory />
+                    <span className="is-drawer-close:hidden">
+                      Payment History
+                    </span>
                   </button>
                 </li>
               </ul>
