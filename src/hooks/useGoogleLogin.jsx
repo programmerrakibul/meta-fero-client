@@ -16,7 +16,15 @@ const useGoogleLogin = () => {
   const handleGoogleLogin = async () => {
     try {
       const userCredentials = await loginWithGoogle();
-      const data = await mutateAsync(userCredentials.user);
+
+      const user = {
+        name: userCredentials.user.displayName,
+        email: userCredentials.user.email,
+        photoURL: userCredentials.user.photoURL,
+        uid: userCredentials.user.uid,
+      }
+
+      const data = await mutateAsync(user);
       console.log(data);
     } catch (err) {
       console.log(err);

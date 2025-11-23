@@ -5,9 +5,10 @@ import MyContainer from "../Shared/MyContainer/MyContainer";
 import ErrorText from "../../components/ErrorText/ErrorText";
 import { useLoaderData } from "react-router";
 import useAuthInfo from "../../hooks/useAuthInfo";
-import Swal from "sweetalert2";
 import useSecureAxios from "../../hooks/useSecureAxios";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 
 const Rider = () => {
   const secureAxios = useSecureAxios();
@@ -15,6 +16,13 @@ const Rider = () => {
   const { data } = useLoaderData();
   const duplicateRegions = data.map((item) => item.region);
   const regions = [...new Set(duplicateRegions)];
+  const { mutateAsync } = useMutation({
+    mutationKey: ["rider"],
+    mutationFn: async (payload) => {
+      const res = await secureAxios.post("/riders", payload);
+      return res.data;
+    },
+  });
 
   const {
     register,
@@ -23,8 +31,7 @@ const Rider = () => {
     formState: { errors },
   } = useForm();
 
-  const senderRegion = useWatch({ control, name: "sender_region" });
-  const receiverRegion = useWatch({ control, name: "receiver_region" });
+  const riderRegion = useWatch({ control, name: "rider_region" });
 
   const districtByRegion = (region) => {
     const districts = data.reduce((acc, item) => {
@@ -37,66 +44,28 @@ const Rider = () => {
     return districts;
   };
 
-  const handleSendParcel = async (info) => {
-    const isDocument = info.document_type === "document";
-    const isSameDistrict = info.sender_district === info.receiver_district;
-    const parcelWeight = parseFloat(info.parcel_weight);
-    let deliveryCharge = 0;
+  const createRider = async (info) => {
+    info.rider_nid = Number(info.rider_nid);
+    info.rider_contact = Number(info.rider_contact);
+    info.rider_age = Number(info.rider_age);
 
-    Object.entries(info).forEach(([key, value]) => {
-      info[key] = value.trim();
-    });
+    try {
+      const data = await mutateAsync(info);
 
-    info.parcel_weight = parcelWeight;
-    info.sender_number = Number(info.sender_number);
-    info.receiver_number = Number(info.receiver_number);
-    info.uid = currentUser.uid;
-    info.created_at = new Date().toISOString();
-    info.delivery_status = "pending";
-    info.payment_status = "pending";
+      const title = data.isNew
+        ? "Your application has been uploaded"
+        : "You've already applied";
+      const icon = data.isNew ? "success" : "warning";
 
-    if (isDocument) {
-      deliveryCharge = isSameDistrict ? 60 : 80;
-    } else {
-      if (parcelWeight <= 3) {
-        deliveryCharge = isSameDistrict ? 110 : 150;
-      } else {
-        const minCharge = isSameDistrict ? 110 : 150;
-        const extraWeight = parcelWeight - 3;
-        const extraCharge = isSameDistrict
-          ? extraWeight * 40
-          : extraWeight * 40 + 40;
-        deliveryCharge = minCharge + extraCharge;
-      }
-    }
+      Swal.fire({
+        icon,
+        title,
+        timer: 2000,
+      });
+    } catch (err) {
+      console.log(err);
 
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: `You'll be charged ${deliveryCharge} Taka`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Agreed",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const { data } = await secureAxios.post("/parcels", {
-          ...info,
-          deliveryCharge,
-        });
-
-        if (data.success) {
-          Swal.fire({
-            title: "Parcel data uploaded",
-            text: "Your parcel data has been uploaded.",
-            icon: "success",
-          });
-        }
-      } catch {
-        toast.error("Parcel data uploaded failed");
-      }
+      toast.error("Parcel data uploaded failed");
     }
   };
 
@@ -107,363 +76,167 @@ const Rider = () => {
       <section className="my-10">
         <MyContainer className="bg-white p-8! md:p-14! space-y-7">
           <div className="space-y-3.5">
-            <MyTitle>Send A Parcel</MyTitle>
-            <h5 className="text-xl font-semibold">Enter your parcel details</h5>
+            <MyTitle>Be a Rider</MyTitle>
+            <p className="max-w-xl w-full">
+              Enjoy fast, reliable parcel delivery with real-time tracking and
+              zero hassle. From personal packages to business shipments — we
+              deliver on time, every time.
+            </p>
           </div>
 
           <div className="divider"></div>
 
-          <form onSubmit={handleSubmit(handleSendParcel)}>
-            <div className="fieldset gap-5 text-base">
-              <div className="space-y-5">
-                <div className="inline-flex items-center gap-3.5">
-                  <label className="label gap-1.5">
-                    <input
-                      type="radio"
-                      value="document"
-                      className="radio radio-primary"
-                      {...register("document_type", {
-                        required: "Document type is required",
-                      })}
-                    />
-                    <span>Document</span>
-                  </label>
+          <form onSubmit={handleSubmit(createRider)}>
+            <h5 className="font-bold text-lg md:text-xl mb-4">
+              Tell us about yourself
+            </h5>
 
-                  <label className="label gap-1.5">
-                    <input
-                      type="radio"
-                      value="non-document"
-                      className="radio radio-primary"
-                      {...register("document_type", {
-                        required: "Document type is required",
-                      })}
-                    />
-                    <span>Non-Document</span>
-                  </label>
-                </div>
+            <div className="fieldset md:grid-cols-2 gap-12 text-base">
+              <div className="flex-1 space-y-3.5">
+                {/* Rider Name */}
+                <label className="label flex-col items-start gap-1">
+                  <span>Name</span>
+                  <input
+                    type="text"
+                    className="input"
+                    defaultValue={currentUser.displayName}
+                    placeholder="Name"
+                    {...register("rider_name")}
+                    readOnly
+                  />
+                </label>
 
-                {errors.document_type && (
-                  <ErrorText>{errors.document_type.message}</ErrorText>
-                )}
+                {/* Rider Email */}
+                <label className="label flex-col items-start gap-1">
+                  <span>Email</span>
+                  <input
+                    type="email"
+                    className="input"
+                    defaultValue={currentUser.email}
+                    placeholder="Email"
+                    {...register("rider_email")}
+                    readOnly
+                  />
+                </label>
 
-                <div className="flex items-center justify-between gap-12">
-                  <label className="label flex-col items-start gap-1">
-                    <span>Parcel Name</span>
+                {/* Rider NID */}
+                <label className="label flex-col items-start gap-1">
+                  <span>NID No:</span>
+                  <input
+                    type="number"
+                    className="input"
+                    placeholder="NID"
+                    {...register("rider_nid", {
+                      required: "Rider NID is required",
+                    })}
+                  />
 
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Parcel Name"
-                      {...register("parcel_name", {
-                        required: "Parcel Name is required",
-                        validate: (value) => {
-                          if (!value.trim()) return "Parcel Name is required";
-                        },
-                      })}
-                    />
+                  {errors.rider_nid && (
+                    <ErrorText>{errors.rider_nid.message}</ErrorText>
+                  )}
+                </label>
 
-                    {errors.parcel_name && (
-                      <ErrorText>{errors.parcel_name.message}</ErrorText>
-                    )}
-                  </label>
+                {/* Rider Contact No */}
+                <label className="label flex-col items-start gap-1">
+                  <span>Contact Number</span>
+                  <input
+                    type="number"
+                    className="input"
+                    placeholder="Contact Number"
+                    {...register("rider_contact", {
+                      required: "Contact Number is required",
+                    })}
+                  />
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Parcel Weight</span>
-                    <input
-                      type="number"
-                      step="any"
-                      className="input"
-                      placeholder="Parcel Weight"
-                      {...register("parcel_weight", {
-                        required: "Parcel Weight is required",
-                      })}
-                    />
-
-                    {errors.parcel_weight && (
-                      <ErrorText>{errors.parcel_weight.message}</ErrorText>
-                    )}
-                  </label>
-                </div>
+                  {errors.rider_contact && (
+                    <ErrorText>{errors.rider_contact.message}</ErrorText>
+                  )}
+                </label>
               </div>
 
-              <div className="flex items-center justify-between gap-12">
-                {/* Sender Details */}
-                <div className="flex-1 space-y-3.5">
-                  <h6 className="text-xl font-bold">Sender Details</h6>
+              <div className="flex-1 space-y-3.5">
+                {/* Rider Age */}
+                <label className="label flex-col items-start gap-1">
+                  <span>Your Age</span>
+                  <input
+                    type="number"
+                    className="input"
+                    placeholder="Your Age"
+                    {...register("rider_age", {
+                      required: "Rider Age is required",
+                    })}
+                  />
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Name</span>
-                    <input
-                      type="text"
-                      className="input"
-                      defaultValue={currentUser.displayName}
-                      placeholder="Name"
-                      {...register("sender_name")}
-                      readOnly
-                    />
-                  </label>
+                  {errors.rider_age && (
+                    <ErrorText>{errors.rider_age.message}</ErrorText>
+                  )}
+                </label>
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Email</span>
-                    <input
-                      type="email"
-                      className="input"
-                      defaultValue={currentUser.email}
-                      placeholder="Email"
-                      {...register("sender_email")}
-                      readOnly
-                    />
-                  </label>
+                <label className="label flex-col items-start gap-1">
+                  <span>Your Region</span>
+                  <select
+                    defaultValue=""
+                    className="select"
+                    {...register("rider_region", {
+                      required: "Rider Region is required",
+                    })}
+                  >
+                    <option disabled={true} value="">
+                      Select your Region
+                    </option>
+                    {regions.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Address</span>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Address"
-                      {...register("sender_address", {
-                        required: "Sender Address is required",
-                        validate: (value) => {
-                          if (!value.trim())
-                            return "Sender Address is required";
-                        },
-                      })}
-                    />
+                  {errors.rider_region && (
+                    <ErrorText>{errors.rider_region.message}</ErrorText>
+                  )}
+                </label>
 
-                    {errors.sender_address && (
-                      <ErrorText>{errors.sender_address.message}</ErrorText>
-                    )}
-                  </label>
+                <label className="label flex-col items-start gap-1">
+                  <span>Your District</span>
+                  <select
+                    defaultValue=""
+                    className="select"
+                    {...register("rider_district", {
+                      required: "Rider District is required",
+                    })}
+                  >
+                    <option disabled={true} value="">
+                      Select your District
+                    </option>
+                    {districtByRegion(riderRegion).map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Phone No</span>
-                    <input
-                      type="number"
-                      className="input"
-                      placeholder="Phone No"
-                      {...register("sender_number", {
-                        required: "Sender Number is required",
-                        validate: (value) => {
-                          if (!value.trim()) return "Sender Number is required";
-                        },
-                      })}
-                    />
+                  {errors.rider_district && (
+                    <ErrorText>{errors.rider_district.message}</ErrorText>
+                  )}
+                </label>
 
-                    {errors.sender_number && (
-                      <ErrorText>{errors.sender_number.message}</ErrorText>
-                    )}
-                  </label>
+                <label className="label flex-col items-start gap-1">
+                  <span>Vehicle</span>
+                  <select
+                    defaultValue=""
+                    className="select"
+                    {...register("vehicle", {
+                      required: "Rider Vehicle is required",
+                    })}
+                  >
+                    <option disabled={true} value="">
+                      Select your Vehicle
+                    </option>
+                    <option>Bicycle</option>
+                    <option>Motor Bike</option>
+                    <option>Truck</option>
+                  </select>
 
-                  <label className="label flex-col items-start gap-1">
-                    <span>Your Region</span>
-                    <select
-                      defaultValue=""
-                      className="select"
-                      {...register("sender_region", {
-                        required: "Sender Region is required",
-                      })}
-                    >
-                      <option disabled={true} value="">
-                        Select your Region
-                      </option>
-                      {regions.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-
-                    {errors.sender_region && (
-                      <ErrorText>{errors.sender_region.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Your District</span>
-                    <select
-                      defaultValue=""
-                      className="select"
-                      {...register("sender_district", {
-                        required: "Sender District is required",
-                      })}
-                    >
-                      <option disabled={true} value="">
-                        Select your District
-                      </option>
-                      {districtByRegion(senderRegion).map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-
-                    {errors.sender_district && (
-                      <ErrorText>{errors.sender_district.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Pickup Instruction</span>
-                    <textarea
-                      name=""
-                      className="textarea"
-                      placeholder="Pickup Instruction"
-                      {...register("pickup_instruction", {
-                        required: "Pickup Instruction is required",
-                        validate: (value) => {
-                          if (!value.trim())
-                            return "Pickup Instruction is required";
-                        },
-                      })}
-                    ></textarea>
-
-                    {errors.pickup_instruction && (
-                      <ErrorText>{errors.pickup_instruction.message}</ErrorText>
-                    )}
-                  </label>
-                </div>
-
-                {/* Receiver Details */}
-                <div className="flex-1 space-y-3.5">
-                  <h6 className="text-xl font-bold">Receiver Details</h6>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Name</span>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Name"
-                      {...register("receiver_name", {
-                        required: "Receiver Name is required",
-                        validate: (value) => {
-                          if (!value.trim()) return "Receiver Name is required";
-                        },
-                      })}
-                    />
-
-                    {errors.receiver_name && (
-                      <ErrorText>{errors.receiver_name.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Email</span>
-                    <input
-                      type="email"
-                      className="input"
-                      placeholder="Email"
-                      {...register("receiver_email", {
-                        required: "Receiver Email is required",
-                        validate: (value) => {
-                          if (!value.trim())
-                            return "Receiver Email is required";
-                        },
-                      })}
-                    />
-
-                    {errors.receiver_email && (
-                      <ErrorText>{errors.receiver_email.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Address</span>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Address"
-                      {...register("receiver_address", {
-                        required: "Receiver Address is required",
-                        validate: (value) => {
-                          if (!value.trim())
-                            return "Receiver Address is required";
-                        },
-                      })}
-                    />
-
-                    {errors.receiver_address && (
-                      <ErrorText>{errors.receiver_address.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Phone No</span>
-                    <input
-                      type="number"
-                      className="input"
-                      placeholder="Phone No"
-                      {...register("receiver_number", {
-                        required: "Receiver Number is required",
-                      })}
-                    />
-
-                    {errors.receiver_number && (
-                      <ErrorText>{errors.receiver_number.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Your Region</span>
-                    <select
-                      defaultValue=""
-                      className="select"
-                      {...register("receiver_region", {
-                        required: "Sender Region is required",
-                      })}
-                    >
-                      <option disabled={true} value="">
-                        Select your Region
-                      </option>
-                      {regions.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-
-                    {errors.receiver_region && (
-                      <ErrorText>{errors.receiver_region.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Your District</span>
-                    <select
-                      defaultValue=""
-                      className="select"
-                      {...register("receiver_district", {
-                        required: "Sender District is required",
-                      })}
-                    >
-                      <option disabled={true} value="">
-                        Select your District
-                      </option>
-                      {districtByRegion(receiverRegion).map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-
-                    {errors.receiver_district && (
-                      <ErrorText>{errors.receiver_district.message}</ErrorText>
-                    )}
-                  </label>
-
-                  <label className="label flex-col items-start gap-1">
-                    <span>Delivery Instruction</span>
-                    <textarea
-                      name=""
-                      className="textarea"
-                      placeholder="Delivery Instruction"
-                      {...register("delivery_instruction", {
-                        required: "Delivery Instruction is required",
-                        validate: (value) => {
-                          if (!value.trim())
-                            return "Delivery Instruction is required";
-                        },
-                      })}
-                    ></textarea>
-
-                    {errors.delivery_instruction && (
-                      <ErrorText>
-                        {errors.delivery_instruction.message}
-                      </ErrorText>
-                    )}
-                  </label>
-                </div>
+                  {errors.vehicle && (
+                    <ErrorText>{errors.vehicle.message}</ErrorText>
+                  )}
+                </label>
               </div>
             </div>
 

@@ -47,13 +47,18 @@ const Register = () => {
 
       const photoURL = result.data.url;
       const userCredentials = await createUser(info.email, info.password);
-      const user = userCredentials.user;
-      await updateUserProfile({ ...user, displayName, photoURL });
+      await updateUserProfile({ ...userCredentials.user, displayName, photoURL });
 
-      const data = await mutateAsync(user);
+      const user = {
+        name: userCredentials.user.displayName,
+        email: userCredentials.user.email,
+        photoURL: userCredentials.user.photoURL,
+        uid: userCredentials.user.uid,
+      }
 
-      console.log(data);
-      console.log(user);
+      await mutateAsync(user);
+
+
     } catch (err) {
       console.log(err);
     }
