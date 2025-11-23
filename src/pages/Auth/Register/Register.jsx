@@ -6,23 +6,29 @@ import ErrorText from "../../../components/ErrorText/ErrorText";
 import axios from "axios";
 import useAuthInfo from "../../../hooks/useAuthInfo";
 import useGoogleLogin from "../../../hooks/useGoogleLogin";
-import { useState } from "react";
 import ActionSpinner from "../../../components/ActionSpinner/ActionSpinner";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import { useMutation } from "@tanstack/react-query";
+import useSecureAxios from "../../../hooks/useSecureAxios";
 
 const Register = () => {
+  const secureAxios = useSecureAxios();
   const { googleLoading, handleGoogleLogin } = useGoogleLogin();
-  const [loading, setLoading] = useState(false);
   const { createUser, updateUserProfile } = useAuthInfo();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { mutateAsync, isPending: loading } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: async (payload) => {
+      const res = await secureAxios.post("/users", payload);
+      return res.data;
+    },
+  });
 
   const handleRegister = async (info) => {
-    setLoading(true);
-
     const displayName = info.name;
     const imageInfo = info.image[0];
     const formData = new FormData();
@@ -44,11 +50,12 @@ const Register = () => {
       const user = userCredentials.user;
       await updateUserProfile({ ...user, displayName, photoURL });
 
+      const data = await mutateAsync(user);
+
+      console.log(data);
       console.log(user);
     } catch (err) {
       console.log(err);
-    } finally {
-      setLoading(false);
     }
   };
 

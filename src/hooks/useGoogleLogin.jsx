@@ -1,19 +1,25 @@
-import { useState } from "react";
 import useAuthInfo from "./useAuthInfo";
+import { useMutation } from "@tanstack/react-query";
+import useSecureAxios from "./useSecureAxios";
 
 const useGoogleLogin = () => {
-  const [googleLoading, setGoogleLoading] = useState(false);
   const { loginWithGoogle } = useAuthInfo();
+  const secureAxios = useSecureAxios();
+  const { mutateAsync, isPending: googleLoading } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: async (payload) => {
+      const res = await secureAxios.post("/users", payload);
+      return res.data;
+    },
+  });
 
   const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-
     try {
-      await loginWithGoogle();
+      const userCredentials = await loginWithGoogle();
+      const data = await mutateAsync(userCredentials.user);
+      console.log(data);
     } catch (err) {
       console.log(err);
-    } finally {
-      setGoogleLoading(false);
     }
   };
 
