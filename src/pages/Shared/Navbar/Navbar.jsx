@@ -88,21 +88,21 @@ const Navbar = () => {
               {currentUser && (
                 <>
                   <li>
-                    <Link to="/send-parcel" className="nav-links">
+                    <NavLink to="/send-parcel" className="nav-links">
                       Send Parcel
-                    </Link>
+                    </NavLink>
                   </li>
 
                   <li>
-                    <Link to="/be-a-rider" className="nav-links">
+                    <NavLink to="/be-a-rider" className="nav-links">
                       Be a Rider
-                    </Link>
+                    </NavLink>
                   </li>
 
                   <li>
-                    <Link to="/dashboard" className="nav-links">
+                    <NavLink to="/dashboard" className="nav-links">
                       Dashboard
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               )}
