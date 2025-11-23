@@ -12,7 +12,7 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     (async () => {
-      if (session_id) {
+      if (session_id && Object.keys(paymentInfo).length === 0) {
         setLoading(true);
 
         try {
@@ -20,14 +20,14 @@ const PaymentSuccess = () => {
             `/parcel-checkout/status/${session_id}`
           );
 
-          if (data.transaction_id && data.tracking_id) {
-            setPaymentInfo({
-              transaction_id: data.transaction_id,
-              tracking_id: data.tracking_id,
-            });
-          } else {
-            navigate("../my-parcels", { replace: true });
+          if (data.isExist) {
+            return navigate("../my-parcels", { replace: true });
           }
+
+          setPaymentInfo({
+            transaction_id: data.transaction_id,
+            tracking_id: data.tracking_id,
+          });
         } catch (err) {
           console.log(err);
         } finally {
