@@ -1,5 +1,5 @@
 import useAuthInfo from "../../../hooks/useAuthInfo";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import useSecureAxios from "../../../hooks/useSecureAxios";
 import { MdPayment } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -22,14 +22,6 @@ const MyParcel = () => {
     },
   });
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ["payment"],
-    mutationFn: async (payload) => {
-      const res = await secureAxios.post("/parcel-checkout", payload);
-      return res.data;
-    },
-  });
-
   const handlePayment = async (parcel) => {
     const { deliveryCharge, parcel_name, sender_email, sender_name, _id } =
       parcel;
@@ -43,10 +35,9 @@ const MyParcel = () => {
     };
 
     try {
-      const res = await mutateAsync(paymentInfo);
-      console.log(res);
+     const {data} = await secureAxios.post("/parcel-checkout", paymentInfo);
 
-      window.location.assign(res.url);
+     window.location.assign(data.url)
     } catch (err) {
       console.log(err);
     }
