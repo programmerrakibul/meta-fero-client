@@ -10,17 +10,22 @@ import ActionSpinner from "../../../components/ActionSpinner/ActionSpinner";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import { useMutation } from "@tanstack/react-query";
 import useSecureAxios from "../../../hooks/useSecureAxios";
+import Swal from "sweetalert2";
+import { useState } from "react";
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
   const secureAxios = useSecureAxios();
   const { googleLoading, handleGoogleLogin } = useGoogleLogin();
   const { createUser, updateUserProfile } = useAuthInfo();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
-  const { mutateAsync, isPending: loading } = useMutation({
+
+  const { mutateAsync } = useMutation({
     mutationKey: ["user"],
     mutationFn: async (payload) => {
       const res = await secureAxios.post("/users", payload);
@@ -33,6 +38,7 @@ const Register = () => {
     const imageInfo = info.image[0];
     const formData = new FormData();
     formData.append("image", imageInfo);
+    setLoading(true);
 
     try {
       const { data: result } = await axios.post(
@@ -47,20 +53,33 @@ const Register = () => {
 
       const photoURL = result.data.url;
       const userCredentials = await createUser(info.email, info.password);
-      await updateUserProfile({ ...userCredentials.user, displayName, photoURL });
+      await updateUserProfile({
+        ...userCredentials.user,
+        displayName,
+        photoURL,
+      });
 
       const user = {
         name: userCredentials.user.displayName,
         email: userCredentials.user.email,
         photoURL: userCredentials.user.photoURL,
         uid: userCredentials.user.uid,
-      }
+      };
 
       await mutateAsync(user);
 
+      reset();
 
+      Swal.fire({
+        icon: "success",
+        title: "Account created successfully",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -4,6 +4,7 @@ import MyContainer from "../pages/Shared/MyContainer/MyContainer";
 import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
 import { FaHistory } from "react-icons/fa";
 import { FaMotorcycle } from "react-icons/fa6";
+import { ImUsers } from "react-icons/im";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -65,6 +66,18 @@ const DashboardLayout = () => {
                   >
                     <TbAlignBoxBottomLeft />
                     <span className="is-drawer-close:hidden">Dashboard</span>
+                  </button>
+                </li>
+
+                {/* List item */}
+                <li>
+                  <button
+                    onClick={() => navigate("/dashboard/manage-users")}
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manage Users"
+                  >
+                    <ImUsers />
+                    <span className="is-drawer-close:hidden">Manage Users</span>
                   </button>
                 </li>
 
