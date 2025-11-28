@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import useSecureAxios from "../../../hooks/useSecureAxios";
+import Swal from "sweetalert2";
 
 const AppliedRiders = () => {
   const secureAxios = useSecureAxios();
 
-  const { data: riders = [], isPending } = useQuery({
+  const {
+    data: riders = [],
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["riders"],
     queryFn: async () => {
       const { data } = await secureAxios.get("/riders");
@@ -17,7 +22,27 @@ const AppliedRiders = () => {
     return <p>Loading..</p>;
   }
 
-  console.log(riders);
+  const handleRequestedRider = async (rider, status) => {
+    const { _id, rider_email } = rider;
+    try {
+      const { data } = await secureAxios.patch(`/riders/${_id}`, {
+        status,
+        rider_email,
+      });
+
+      if (data.modifiedCount) {
+        refetch();
+
+        Swal.fire({
+          icon: "success",
+          title: `Rider has been ${status}`,
+          timer: 2000,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -48,13 +73,31 @@ const AppliedRiders = () => {
                     <td>{rider.rider_age}</td>
                     <td className="capitalize">{rider.status}</td>
                     <td>
-                      <button className="btn btn-sm btn-primary text-neutral">
-                        Approve
-                      </button>
+                      {rider.status === "pending" ? (
+                        <>
+                          <button
+                            onClick={() =>
+                              handleRequestedRider(rider, "approved")
+                            }
+                            className="btn btn-sm btn-primary text-neutral"
+                          >
+                            Approve
+                          </button>
 
-                      <button className="btn btn-sm btn-warning text-neutral ml-1.5">
-                        Reject
-                      </button>
+                          <button
+                            onClick={() =>
+                              handleRequestedRider(rider, "rejected")
+                            }
+                            className="btn btn-sm btn-warning text-neutral ml-1.5"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      ) : (
+                        <button className="btn btn-sm btn-error text-neutral ml-1.5">
+                          Delete
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
