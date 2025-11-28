@@ -4,7 +4,11 @@ import useSecureAxios from "../../../hooks/useSecureAxios";
 const ManageUsers = () => {
   const secureAxios = useSecureAxios();
 
-  const { data: users = [], isPending } = useQuery({
+  const {
+    data: users = [],
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       const { data } = await secureAxios.get("/users");
@@ -17,7 +21,17 @@ const ManageUsers = () => {
     return <p>Loading...</p>;
   }
 
-  console.log(users);
+  const handleUserRole = async (id, role) => {
+    try {
+      const { data } = await secureAxios.patch(`/users/${id}`, { role });
+
+      if (data.modifiedCount) {
+        refetch();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -59,11 +73,17 @@ const ManageUsers = () => {
                   <td className="flex items-center gap-1.5">
                     <button className="btn btn-sm">View</button>
                     {user.role !== "admin" ? (
-                      <button className="btn btn-sm btn-primary text-black">
+                      <button
+                        onClick={() => handleUserRole(user._id, "admin")}
+                        className="btn btn-sm btn-primary text-black"
+                      >
                         Make Admin
                       </button>
                     ) : (
-                      <button className="btn btn-sm btn-warning">
+                      <button
+                        onClick={() => handleUserRole(user._id, "user")}
+                        className="btn btn-sm btn-warning"
+                      >
                         Remove Admin
                       </button>
                     )}
