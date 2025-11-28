@@ -13,6 +13,7 @@ import Overview from "../pages/Dashboard/Overview/Overview";
 import PaymentSuccess from "../pages/Dashboard/Payment/PaymentSuccess";
 import PaymentHistory from "../pages/Dashboard/Payment/PaymentHistory";
 import Rider from "../pages/Rider/Rider";
+import AppliedRiders from "../pages/Dashboard/AppliedRiders/AppliedRiders";
 
 const Router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const Router = createBrowserRouter([
       {
         path: "payment-history",
         element: <PaymentHistory />,
+      },
+      {
+        path: "applied-riders",
+        element: <AppliedRiders />,
       },
     ],
   },

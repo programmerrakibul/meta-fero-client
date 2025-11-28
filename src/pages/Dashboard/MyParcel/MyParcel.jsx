@@ -58,7 +58,7 @@ const MyParcel = () => {
               {/* head */}
               <thead>
                 <tr>
-                  <th></th>
+                  <th>#</th>
                   <th>Parcel Name</th>
                   <th>Delivery</th>
                   <th>Amount</th>

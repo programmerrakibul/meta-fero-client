@@ -3,6 +3,7 @@ import Logo from "../components/Logo/Logo";
 import MyContainer from "../pages/Shared/MyContainer/MyContainer";
 import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
 import { FaHistory } from "react-icons/fa";
+import { FaMotorcycle } from "react-icons/fa6";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -89,6 +90,20 @@ const DashboardLayout = () => {
                     <FaHistory />
                     <span className="is-drawer-close:hidden">
                       Payment History
+                    </span>
+                  </button>
+                </li>
+
+                {/* List item */}
+                <li>
+                  <button
+                    onClick={() => navigate("/dashboard/applied-riders")}
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Applied RIders"
+                  >
+                    <FaMotorcycle />
+                    <span className="is-drawer-close:hidden">
+                      Applied RIders
                     </span>
                   </button>
                 </li>
