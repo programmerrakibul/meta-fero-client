@@ -6,6 +6,7 @@ import { FaHistory } from "react-icons/fa";
 import { FaMotorcycle } from "react-icons/fa6";
 import { ImUsers } from "react-icons/im";
 import useRole from "../hooks/useRole";
+import { RiEBikeFill } from "react-icons/ri";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -115,7 +116,7 @@ const DashboardLayout = () => {
                         </span>
                       </button>
                     </li>
-                    
+
                     <li>
                       <button
                         onClick={() => navigate("/dashboard/applied-riders")}
@@ -125,6 +126,19 @@ const DashboardLayout = () => {
                         <FaMotorcycle />
                         <span className="is-drawer-close:hidden">
                           Applied RIders
+                        </span>
+                      </button>
+                    </li>
+
+                    <li>
+                      <button
+                        onClick={() => navigate("/dashboard/assign-riders")}
+                        className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Assign RIders"
+                      >
+                        <RiEBikeFill />
+                        <span className="is-drawer-close:hidden">
+                          Assign RIders
                         </span>
                       </button>
                     </li>

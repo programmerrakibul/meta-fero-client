@@ -35,9 +35,9 @@ const MyParcel = () => {
     };
 
     try {
-     const {data} = await secureAxios.post("/parcel-checkout", paymentInfo);
+      const { data } = await secureAxios.post("/parcel-checkout", paymentInfo);
 
-     window.location.assign(data.url)
+      window.location.assign(data.url);
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +60,8 @@ const MyParcel = () => {
                 <tr>
                   <th>#</th>
                   <th>Parcel Name</th>
-                  <th>Delivery</th>
+                  <th>Delivery Status</th>
+                  <th>Tracking ID</th>
                   <th>Amount</th>
                   <th>Payment</th>
                   <th>Action</th>
@@ -72,7 +73,10 @@ const MyParcel = () => {
                   <tr key={parcel._id}>
                     <th>{index + 1}</th>
                     <td>{parcel.parcel_name}</td>
-                    <td className="capitalize">{parcel.delivery_status}</td>
+                    <td className="capitalize">
+                      {parcel.delivery_status.replace("_", " ")}
+                    </td>
+                    <td className="capitalize">{parcel.tracking_id}</td>
                     <td className="capitalize">${parcel.deliveryCharge}</td>
                     <td className="capitalize">{parcel.payment_status}</td>
                     <td className="flex items-center gap-1.5">
