@@ -21,7 +21,6 @@ const PaymentSuccess = () => {
             `/parcel-checkout/status/${session_id}`
           );
 
-          console.log(data);
 
           setPaymentInfo({
             transaction_id: data.transaction_id,

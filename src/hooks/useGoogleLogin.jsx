@@ -24,8 +24,7 @@ const useGoogleLogin = () => {
         uid: userCredentials.user.uid,
       }
 
-      const data = await mutateAsync(user);
-      console.log(data);
+      await mutateAsync(user);
     } catch (err) {
       console.log(err);
     }

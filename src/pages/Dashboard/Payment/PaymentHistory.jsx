@@ -22,7 +22,6 @@ const PaymentHistory = () => {
   });
 
   const paymentHistory = data?.payments || [];
-  console.log(paymentHistory);
 
   return (
     <>
