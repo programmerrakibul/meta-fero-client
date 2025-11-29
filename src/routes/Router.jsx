@@ -15,6 +15,7 @@ import PaymentHistory from "../pages/Dashboard/Payment/PaymentHistory";
 import Rider from "../pages/Rider/Rider";
 import AppliedRiders from "../pages/Dashboard/AppliedRiders/AppliedRiders";
 import ManageUsers from "../pages/Dashboard/ManageUsers/ManageUsers";
+import AdminRoute from "./AdminRoute";
 
 const Router = createBrowserRouter([
   {
@@ -77,13 +78,20 @@ const Router = createBrowserRouter([
         path: "payment-history",
         element: <PaymentHistory />,
       },
+
       {
-        path: "applied-riders",
-        element: <AppliedRiders />,
-      },
-      {
-        path: "manage-users",
-        element: <ManageUsers />,
+        path: "",
+        element: <AdminRoute />,
+        children: [
+          {
+            path: "manage-users",
+            element: <ManageUsers />,
+          },
+          {
+            path: "applied-riders",
+            element: <AppliedRiders />,
+          },
+        ],
       },
     ],
   },

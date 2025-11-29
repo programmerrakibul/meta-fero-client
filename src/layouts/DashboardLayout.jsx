@@ -5,9 +5,15 @@ import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
 import { FaHistory } from "react-icons/fa";
 import { FaMotorcycle } from "react-icons/fa6";
 import { ImUsers } from "react-icons/im";
+import useRole from "../hooks/useRole";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
+  const { role, isPending } = useRole();
+
+  if (isPending) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
@@ -72,18 +78,6 @@ const DashboardLayout = () => {
                 {/* List item */}
                 <li>
                   <button
-                    onClick={() => navigate("/dashboard/manage-users")}
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Manage Users"
-                  >
-                    <ImUsers />
-                    <span className="is-drawer-close:hidden">Manage Users</span>
-                  </button>
-                </li>
-
-                {/* List item */}
-                <li>
-                  <button
                     onClick={() => navigate("/dashboard/my-parcels")}
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="My Parcels"
@@ -107,19 +101,35 @@ const DashboardLayout = () => {
                   </button>
                 </li>
 
-                {/* List item */}
-                <li>
-                  <button
-                    onClick={() => navigate("/dashboard/applied-riders")}
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Applied RIders"
-                  >
-                    <FaMotorcycle />
-                    <span className="is-drawer-close:hidden">
-                      Applied RIders
-                    </span>
-                  </button>
-                </li>
+                {role === "admin" && (
+                  <>
+                    <li>
+                      <button
+                        onClick={() => navigate("/dashboard/manage-users")}
+                        className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Manage Users"
+                      >
+                        <ImUsers />
+                        <span className="is-drawer-close:hidden">
+                          Manage Users
+                        </span>
+                      </button>
+                    </li>
+                    
+                    <li>
+                      <button
+                        onClick={() => navigate("/dashboard/applied-riders")}
+                        className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Applied RIders"
+                      >
+                        <FaMotorcycle />
+                        <span className="is-drawer-close:hidden">
+                          Applied RIders
+                        </span>
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
