@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useSecureAxios from "../../../hooks/useSecureAxios";
 import { useRef, useState } from "react";
+import Swal from "sweetalert2";
 
 const AssignRiders = () => {
   const secureAxios = useSecureAxios();
   const [selectedParcel, setSelectedParcel] = useState(null);
   const ridersModalRef = useRef(null);
+  const queryCLient = useQueryClient();
 
   const { data: riders = [] } = useQuery({
     queryKey: ["riders", "available", selectedParcel?.sender_district],
@@ -19,7 +21,11 @@ const AssignRiders = () => {
     },
   });
 
-  const { data: parcels = [], isPending: parcelLoading } = useQuery({
+  const {
+    data: parcels = [],
+    isPending: parcelLoading,
+    refetch: parcelRefetch,
+  } = useQuery({
     queryKey: ["parcels", "pending_pickup"],
     queryFn: async () => {
       const { data } = await secureAxios(
@@ -37,6 +43,39 @@ const AssignRiders = () => {
   const showRiders = (parcel) => {
     ridersModalRef.current.showModal();
     setSelectedParcel(parcel);
+  };
+
+  const handleAssignRider = async (rider) => {
+    const riderInfo = {
+      rider_id: rider._id,
+      rider_name: rider.rider_name,
+      rider_email: rider.rider_email,
+    };
+
+    try {
+      const { data } = await secureAxios.patch(
+        `/parcels/${selectedParcel._id}`,
+        riderInfo
+      );
+
+      if (data.modifiedCount) {
+        ridersModalRef.current.close();
+        parcelRefetch();
+        queryCLient.invalidateQueries({
+          queryKey: ["riders", "available", selectedParcel?.sender_district],
+        });
+
+        Swal.fire({
+          icon: "success",
+          title: "Rider successfully assigned",
+          timer: 2000,
+        });
+      }
+
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -105,7 +144,7 @@ const AssignRiders = () => {
                       <td className="capitalize">{rider.rider_district}</td>
                       <td className="flex items-center gap-1.5">
                         <button
-                          onClick={() => showRiders(rider)}
+                          onClick={() => handleAssignRider(rider)}
                           className="btn btn-primary btn-sm text-black"
                         >
                           Assign Rider
