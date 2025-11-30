@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 import Logo from "../components/Logo/Logo";
 import MyContainer from "../pages/Shared/MyContainer/MyContainer";
 import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
-import { FaHistory, FaTasks } from "react-icons/fa";
+import { FaCalendarCheck, FaHistory, FaTasks } from "react-icons/fa";
 import { FaMotorcycle } from "react-icons/fa6";
 import { ImUsers } from "react-icons/im";
 import useRole from "../hooks/useRole";
@@ -111,6 +111,21 @@ const DashboardLayout = () => {
                         <FaTasks />
                         <span className="is-drawer-close:hidden">
                           Assign Deliveries
+                        </span>
+                      </button>
+                    </li>
+
+                    <li>
+                      <button
+                        onClick={() =>
+                          navigate("/dashboard/completed-deliveries")
+                        }
+                        className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Completed Deliveries"
+                      >
+                        <FaCalendarCheck />
+                        <span className="is-drawer-close:hidden">
+                          Completed Deliveries
                         </span>
                       </button>
                     </li>
