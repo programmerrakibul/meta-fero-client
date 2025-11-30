@@ -1,21 +1,19 @@
+import { Outlet } from "react-router";
+import Forbidden from "../components/Forbidden/Forbidden";
 import useRole from "../hooks/useRole";
 
 const RiderRoute = () => {
+  const { role, isPending } = useRole();
 
-  const {role, isPending} = useRole()
-
-  if(isPending){
-    return <p>Loading...</p>
+  if (isPending) {
+    return <p>Loading...</p>;
   }
 
-  console.log(role);
-  
+  if (role !== "rider") {
+    return <Forbidden />;
+  }
 
-  return (
-    <div>
-      
-    </div>
-  );
+  return <Outlet />;
 };
 
 export default RiderRoute;

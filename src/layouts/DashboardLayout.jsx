@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 import Logo from "../components/Logo/Logo";
 import MyContainer from "../pages/Shared/MyContainer/MyContainer";
 import { TbAlignBoxBottomLeft, TbTruckDelivery } from "react-icons/tb";
-import { FaHistory } from "react-icons/fa";
+import { FaHistory, FaTasks } from "react-icons/fa";
 import { FaMotorcycle } from "react-icons/fa6";
 import { ImUsers } from "react-icons/im";
 import useRole from "../hooks/useRole";
@@ -75,7 +75,6 @@ const DashboardLayout = () => {
                     <span className="is-drawer-close:hidden">Dashboard</span>
                   </button>
                 </li>
-
                 {/* List item */}
                 <li>
                   <button
@@ -87,7 +86,6 @@ const DashboardLayout = () => {
                     <span className="is-drawer-close:hidden">My Parcels</span>
                   </button>
                 </li>
-
                 {/* List item */}
                 <li>
                   <button
@@ -101,6 +99,23 @@ const DashboardLayout = () => {
                     </span>
                   </button>
                 </li>
+
+                {role === "rider" && (
+                  <>
+                    <li>
+                      <button
+                        onClick={() => navigate("/dashboard/assign-deliveries")}
+                        className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Assign Deliveries"
+                      >
+                        <FaTasks />
+                        <span className="is-drawer-close:hidden">
+                          Assign Deliveries
+                        </span>
+                      </button>
+                    </li>
+                  </>
+                )}
 
                 {role === "admin" && (
                   <>
