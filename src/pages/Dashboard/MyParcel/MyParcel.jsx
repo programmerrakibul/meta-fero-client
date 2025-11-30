@@ -23,15 +23,22 @@ const MyParcel = () => {
   });
 
   const handlePayment = async (parcel) => {
-    const { deliveryCharge, parcel_name, sender_email, sender_name, _id } =
-      parcel;
-
-    const paymentInfo = {
-      deliveryCharge,
+    const {
+      _id,
+      tracking_id,
       parcel_name,
       sender_email,
       sender_name,
+      deliveryCharge,
+    } = parcel;
+
+    const paymentInfo = {
       parcel_id: _id,
+      tracking_id,
+      parcel_name,
+      sender_email,
+      sender_name,
+      deliveryCharge,
     };
 
     try {
