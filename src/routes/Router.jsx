@@ -20,6 +20,7 @@ import AssignRiders from "../pages/Dashboard/AssignRiders/AssignRiders";
 import RiderRoute from "./RiderRoute";
 import AssignDeliveries from "../pages/Dashboard/AssignDeliveries/AssignDeliveries";
 import CompletedDeliveries from "../pages/Dashboard/CompletedDeliveries/CompletedDeliveries";
+import TrackingLog from "../pages/TrackingLog/TrackingLog";
 
 const Router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const Router = createBrowserRouter([
         path: "be-a-rider",
         element: <Rider />,
         loader: async () => axios("/warehouses.json"),
+      },
+      {
+        path: "tracking/:tracking_id/logs",
+        element: <TrackingLog />,
       },
     ],
   },

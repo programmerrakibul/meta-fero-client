@@ -26,10 +26,10 @@ const AssignRiders = () => {
     isPending: parcelLoading,
     refetch: parcelRefetch,
   } = useQuery({
-    queryKey: ["parcels", "pending_pickup"],
+    queryKey: ["parcels", "parcel_paid"],
     queryFn: async () => {
       const { data } = await secureAxios(
-        "/parcels?delivery_status=pending_pickup"
+        "/parcels?delivery_status=parcel_paid"
       );
 
       return data?.parcels;
@@ -50,7 +50,7 @@ const AssignRiders = () => {
       rider_id: rider._id,
       rider_name: rider.rider_name,
       rider_email: rider.rider_email,
-      tracking_id: selectedParcel.tracking_id
+      tracking_id: selectedParcel.tracking_id,
     };
 
     try {

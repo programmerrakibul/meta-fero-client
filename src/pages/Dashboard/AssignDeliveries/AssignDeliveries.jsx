@@ -43,7 +43,7 @@ const AssignDeliveries = () => {
       message = "Parcel accepted";
     }
 
-    if (delivery_status === "pending_pickup") {
+    if (delivery_status === "parcel_paid") {
       message = "Parcel rejected";
     }
 
@@ -123,7 +123,7 @@ const AssignDeliveries = () => {
                             onClick={() =>
                               handleDeliveryStatus(
                                 parcel._id,
-                                "pending_pickup",
+                                "parcel_paid",
                                 "available"
                               )
                             }

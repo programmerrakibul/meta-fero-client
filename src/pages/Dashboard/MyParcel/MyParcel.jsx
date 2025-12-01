@@ -4,6 +4,7 @@ import useSecureAxios from "../../../hooks/useSecureAxios";
 import { MdPayment } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
+import { Link } from "react-router";
 
 const MyParcel = () => {
   const { currentUser } = useAuthInfo();
@@ -83,7 +84,14 @@ const MyParcel = () => {
                     <td className="capitalize">
                       {parcel.delivery_status.replace("_", " ")}
                     </td>
-                    <td className="capitalize">{parcel.tracking_id}</td>
+                    <td className="capitalize">
+                      <Link
+                        to={`/tracking/${parcel.tracking_id}/logs`}
+                        className="link link-hover"
+                      >
+                        {parcel.tracking_id}
+                      </Link>
+                    </td>
                     <td className="capitalize">${parcel.deliveryCharge}</td>
                     <td className="capitalize">{parcel.payment_status}</td>
                     <td className="flex items-center gap-1.5">
