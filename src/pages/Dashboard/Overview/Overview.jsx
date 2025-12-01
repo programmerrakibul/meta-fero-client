@@ -1,11 +1,22 @@
-const Overview = () => {
-  return (
-    <>
-      <title>Dashboard Overview | MetaFero</title>
+import useRole from "../../../hooks/useRole";
+import AdminOverview from "./AdminOverview";
+import RiderOverview from "./RiderOverview";
+import UserOverview from "./UserOverview";
 
-      <div>This is Overview</div>
-    </>
-  );
+const Overview = () => {
+  const { role, isPending } = useRole();
+
+  if (isPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (role === "admin") {
+    return <AdminOverview />;
+  } else if (role === "rider") {
+    return <RiderOverview />;
+  } else {
+    return <UserOverview />;
+  }
 };
 
 export default Overview;
