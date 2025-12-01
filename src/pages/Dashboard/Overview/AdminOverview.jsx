@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import useSecureAxios from "../../../hooks/useSecureAxios";
+import { Legend, Pie, PieChart, Tooltip } from "recharts";
 
 const AdminOverview = () => {
   const secureAxios = useSecureAxios();
@@ -17,13 +18,11 @@ const AdminOverview = () => {
     return <p>Loading...</p>;
   }
 
-  console.log(stats);
-
   return (
     <>
       <title>Admin | Overview</title>
 
-      <section className="text-center">
+      <section className="text-center space-y-7">
         <div className="stats stats-vertical lg:stats-horizontal shadow">
           {stats.map((stat) => (
             <div
@@ -39,6 +38,31 @@ const AdminOverview = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="w-full h-[300px] text-center">
+          <PieChart
+            style={{
+              width: "100%",
+              height: "100%",
+              aspectRatio: 2,
+            }}
+            responsive
+          >
+            <Pie
+              dataKey="count"
+              startAngle={180}
+              endAngle={0}
+              data={stats}
+              cx="50%"
+              cy="100%"
+              outerRadius="120%"
+              fill="#8884d8"
+              label
+            />
+            <Tooltip />
+            <Legend />
+          </PieChart>
         </div>
       </section>
     </>
